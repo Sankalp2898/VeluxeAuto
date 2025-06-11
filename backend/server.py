@@ -224,6 +224,56 @@ async def get_ai_predictions(car_id: str):
     return predictions
 
 # Initialize sample data
+@app.get("/api/debug/init-events")
+async def init_sample_events():
+    """Debug endpoint to initialize sample events"""
+    # Create sample events
+    sample_events = [
+        {
+            "id": str(uuid.uuid4()),
+            "title": "Porsche Track Day",
+            "description": "Exclusive track day at Laguna Seca for Porsche owners",
+            "event_type": "track-day",
+            "date": "2024-07-25",
+            "location": "Laguna Seca Raceway, CA",
+            "max_attendees": 50,
+            "current_attendees": 23,
+            "brands_filter": ["Porsche"]
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "title": "BMW & Mercedes Meetup",
+            "description": "Luxury German auto meetup in Beverly Hills",
+            "event_type": "meetup",
+            "date": "2024-08-10",
+            "location": "Beverly Hills Hotel, CA",
+            "max_attendees": 75,
+            "current_attendees": 45,
+            "brands_filter": ["BMW", "Mercedes"]
+        },
+        {
+            "id": str(uuid.uuid4()),
+            "title": "Tesla Owners Exclusive",
+            "description": "Private charging station unveiling and test drives",
+            "event_type": "exclusive",
+            "date": "2024-08-20",
+            "location": "Tesla Fremont Factory, CA",
+            "max_attendees": 30,
+            "current_attendees": 18,
+            "brands_filter": ["Tesla"]
+        }
+    ]
+    
+    # Insert events
+    inserted_count = 0
+    for event in sample_events:
+        existing = await db.events.find_one({"title": event["title"]})
+        if not existing:
+            await db.events.insert_one(event)
+            inserted_count += 1
+    
+    return {"success": True, "message": f"Initialized {inserted_count} sample events"}
+
 @app.on_event("startup")
 async def startup_event():
     # Create sample events
