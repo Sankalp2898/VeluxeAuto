@@ -222,7 +222,8 @@ def test_get_events():
 
 def test_rsvp_event(event_id, user_id):
     try:
-        response = requests.post(f"{API_URL}/events/{event_id}/rsvp", json={"user_id": user_id})
+        # Add user_id as a query parameter
+        response = requests.post(f"{API_URL}/events/{event_id}/rsvp?user_id={user_id}")
         success = response.status_code == 200 and response.json().get("success") == True
         return format_result(f"RSVP to Event (Event ID: {event_id})", success, response)
     except Exception as e:
